@@ -6,7 +6,7 @@ class DoctorService {
   Future<String> createDoctor(
       String username, String lastname, String cedula, String email, String password) async {
     final response = await http.post(
-      Uri.parse('http://192.168.1.13:4000/doctor'),
+      Uri.parse('http://192.168.208.60:4000/doctor'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

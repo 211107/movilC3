@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -6,7 +7,7 @@ class UserService {
   Future<String> createUser(
       String username, String lastname, String email, String password) async {
     final response = await http.post(
-      Uri.parse('http://192.168.1.13:4000/'),
+      Uri.parse('http://192.168.208.60:4000/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -40,7 +41,7 @@ class UserService {
     id = int.tryParse(data!);
 
     final response = await http.post(
-      Uri.parse('http://192.168.1.13:4000/paciente'),
+      Uri.parse('http://192.168.208.60:4000/paciente'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -67,9 +68,9 @@ class UserService {
 
 
   }
-  Future<Map<String, dynamic>> getPacienteById(int id) async {
+  Future<Map<String, dynamic>> getPacienteById(int id ) async {
     final response = await http.get(
-      Uri.parse('http://192.168.1.13:4000/paciente/:id'),
+      Uri.parse('http://192.168.208.60:4000/paciente/:id'),
     );
 
     if (response.statusCode == 200) {
@@ -81,11 +82,17 @@ class UserService {
 
   Future<String> updateUser(int edad, String tipoSangre, String enfermedades, String alergias, String medicamentos) async {
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String? data = sharedPreferences.getString('id');
-    int? id = int.tryParse(data!);
+
+    String? idUsuarioString = sharedPreferences.getString('id_usuario');
+    int? idUsuarioInt = idUsuarioString != null ? int.tryParse(idUsuarioString) : null;
+
+
+    //int? id = int.tryParse(data!);
+    print('dato de actualizar');
+   //print(idUsuarioInt);
 
     final response = await http.put(
-      Uri.parse('http://192.168.1.13:4000/1'), // Reemplaza la URL con la ruta correcta para actualizar un usuario
+      Uri.parse('http://192.168.208.60:4000/$idUsuarioInt'), // Reemplaza la URL con la ruta correcta para actualizar un usuario
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -116,14 +123,18 @@ class UserService {
     int? idUsuario = int.tryParse(id!);
 
     final response = await http.delete(
-      Uri.parse('http://192.168.1.13:4000/4'), // Cambia la URL según tu endpoint de eliminación
+      Uri.parse('http://192.168.208.60:4000/$userId'), // Cambia la URL según tu endpoint de eliminación
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode({
         'id_usuario_elimina': idUsuario,
+
       }),
+
     );
+    print('dato de eliminacion: ');
+    print(idUsuario);
 
     final Map<String, dynamic> body = jsonDecode(response.body);
 

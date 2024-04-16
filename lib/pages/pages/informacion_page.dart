@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/pages/pages/formulario_page.dart';
 import 'package:untitled/pages/pages/formulario_actualizar.dart';
 import 'package:http/http.dart' as http;
@@ -8,11 +9,13 @@ import 'package:untitled/pages/services/user_service.dart';
 import 'package:untitled/pages/pages/tablaCitas_page.dart';
 
 class Informacion extends StatefulWidget {
-  const Informacion({super.key, required this.title, required this.userId});
+  const Informacion({super.key, required this.title, required this.userId,required this.nombre,required this.apellido });
 
 
   final String title;
   final int userId;
+  final String nombre;
+  final String apellido;
 
   @override
   State<Informacion> createState() => _InformacionState();
@@ -34,19 +37,29 @@ class _InformacionState extends State<Informacion> {
   Future<void> getPacientes() async {
     try {
       // Realiza una solicitud GET al servidor backend
-      final response = await http.get(Uri.parse('http://192.168.1.13:4000/info'));
+      final response = await http.get(Uri.parse('http://192.168.208.60:4000/$userId'));
+      print(response.statusCode);
 
 
       if (response.statusCode == 200) {
+        final SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
+        sharedPreferences.setString('id_usuario',jsonEncode(userId));
+
         // Si la solicitud fue exitosa, procesa los datos de los pacientes
         setState(() {
+
           pacientes = List<Map<String, dynamic>>.from(json.decode(response.body));
         });
+
       } else {
+        print(pacientes);
         // Si hubo un error en la solicitud, muestra un mensaje de error
-        print('Error al obtener los pacientes: ${response.statusCode}');
+        print('Error al obtener los pacientessss: ${response.statusCode}');
 
       }
+      //print( {pacientes[0]['id_paciente']});
+
     } catch (error) {
       print('Error al obtener los pacientes: $error');
     }
@@ -239,7 +252,7 @@ class _InformacionState extends State<Informacion> {
                         width: 48 * fem,
                         height: 15 * fem,
                         child: Text(
-                          pacientes.isNotEmpty ? pacientes[0]['nombre'] ?? 'N/A' : 'N/A', // Mostrar el nombre del primer paciente si la lista no está vacía
+                          widget.nombre ,   // Mostrar el nombre del primer paciente si la lista no está vacía
                           style: GoogleFonts.inter(
                             fontSize: 12 * ffem,
                             fontWeight: FontWeight.w400,
@@ -297,7 +310,7 @@ class _InformacionState extends State<Informacion> {
                         width: 80*fem,
                         height: 15*fem,
                         child: Text(
-                          pacientes.isNotEmpty ? pacientes[0]['nombre'] ?? 'N/A' : 'N/A',
+                          widget.nombre ,
                           style: GoogleFonts.roboto(
                             fontSize: 12*ffem,
                             fontWeight: FontWeight.w400,
@@ -317,7 +330,7 @@ class _InformacionState extends State<Informacion> {
                         width: 100*fem,
                         height: 15*fem,
                         child: Text(
-                          pacientes.isNotEmpty ? pacientes[0]['apellido'] ?? 'N/A' : 'N/A',
+                          widget.apellido ,
                           style: GoogleFonts.inter(
                             fontSize: 12*ffem,
                             fontWeight: FontWeight.w400,
@@ -587,7 +600,7 @@ class _InformacionState extends State<Informacion> {
                         width: 82*fem,
                         height: 15*fem,
                         child: Text(
-                          pacientes.isNotEmpty ? pacientes[0]['nombre'] ?? 'N/A' : 'N/A',
+                          widget.nombre ,
                           style: GoogleFonts.roboto(
                             fontSize: 12*ffem,
                             fontWeight: FontWeight.w400,

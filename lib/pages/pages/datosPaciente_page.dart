@@ -34,7 +34,7 @@ class _MyDatos_PacienteState extends State<MyDatos_Paciente> {
   Future<void> getPacientes() async {
     try {
       // Realiza una solicitud GET al servidor backend
-      final response = await http.get(Uri.parse('http://192.168.1.13:4000/info'));
+      final response = await http.get(Uri.parse('http://192.168.208.60:4000/info'));
 
 
       if (response.statusCode == 200) {
